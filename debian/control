@@ -1,0 +1,12 @@
+Source: ros-hydro-universal-robot
+Section: misc
+Priority: extra
+Maintainer: Shaun Edwards <sedwards@swri.org>
+Build-Depends: debhelper (>= 7.0.50~), ros-hydro-catkin
+Homepage: http://ros.org/wiki/universal_robot
+Standards-Version: 3.9.2
+
+Package: ros-hydro-universal-robot
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-hydro-ur-bringup, ros-hydro-ur-description, ros-hydro-ur-driver, ros-hydro-ur-gazebo, ros-hydro-ur-kinematics, ros-hydro-ur5-moveit-config
+Description: Drivers, description, and utilities for Universal Robot Arms.
