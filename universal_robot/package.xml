@@ -1,6 +1,6 @@
 <package>
   <name>universal_robot</name>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <description>
       Drivers, description, and utilities for Universal Robot Arms.
   </description>
@@ -16,6 +16,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>ur5_moveit_config</run_depend>
+  <run_depend>ur10_moveit_config</run_depend>
   <run_depend>ur_bringup</run_depend>
   <run_depend>ur_description</run_depend>
   <run_depend>ur_driver</run_depend>
