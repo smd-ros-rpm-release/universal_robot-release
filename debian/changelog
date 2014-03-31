@@ -1,0 +1,9 @@
+ros-hydro-universal-robot (1.0.1-0raring) raring; urgency=high
+
+  * Added all packages in dependency list of metapackage.
+  * Updated to catkin.  ur_driver's files were added to nested Python directory for including in other packages.
+  * Contributors: IPR-SR2, Kelsey
+
+ -- Shaun Edwards <sedwards@swri.org>  Sun, 30 Mar 2014 22:00:00 -0000
+
+
