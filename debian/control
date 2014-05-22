@@ -1,0 +1,12 @@
+Source: ros-hydro-ur-description
+Section: misc
+Priority: extra
+Maintainer: Kelsey Hawkins <kphawkins@gatech.edu>
+Build-Depends: debhelper (>= 9.0.0), ros-hydro-catkin
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-hydro-ur-description
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-hydro-urdf
+Description: URDF description for Universal UR5/10 robot arms
