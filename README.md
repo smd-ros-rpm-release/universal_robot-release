@@ -1,3 +1,30 @@
+## universal_robot (hydro) - 1.0.2-1
+
+The packages in the `universal_robot` repository were released into the `hydro` distro by running `/usr/bin/bloom-release universal_robot -t hydro -r hydro` on `Thu, 22 May 2014 07:42:48 -0000`
+
+These packages were released:
+- `universal_robot`
+- `ur10_moveit_config`
+- `ur5_moveit_config`
+- `ur_bringup`
+- `ur_description`
+- `ur_driver`
+- `ur_gazebo`
+- `ur_kinematics`
+
+Version of package(s) in repository `universal_robot`:
+- rosdistro version: `1.0.2-0`
+- old version: `1.0.2-0`
+- new version: `1.0.2-1`
+
+Versions of tools used:
+- bloom version: `0.5.8`
+- catkin_pkg version: `0.2.2`
+- rosdep version: `0.10.27`
+- rosdistro version: `0.3.5`
+- vcstools version: `0.1.33`
+
+
 ## universal_robot (hydro) - 1.0.2-0
 
 User `fmw@fmw-xps` released the packages in the `universal_robot` repository into the `hydro` distro by running `/usr/bin/bloom-release --ros-distro hydro --track hydro universal_robot` on `Mon, 31 Mar 2014 13:58:49 -0000`
