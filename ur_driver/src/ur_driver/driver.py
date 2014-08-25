@@ -15,8 +15,9 @@ import actionlib
 from sensor_msgs.msg import JointState
 from control_msgs.msg import FollowJointTrajectoryAction
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from geometry_msgs.msg import WrenchStamped
 
-from deserialize import RobotState, RobotMode
+from ur_driver.deserialize import RobotState, RobotMode
 
 prevent_programming = False
 
@@ -28,7 +29,7 @@ prevent_programming = False
 joint_offsets = {}
 
 PORT=30002
-REVERSE_PORT = 50001
+DEFAULT_REVERSE_PORT = 50001
 
 MSG_OUT = 1
 MSG_QUIT = 2
@@ -37,6 +38,8 @@ MSG_MOVEJ = 4
 MSG_WAYPOINT_FINISHED = 5
 MSG_STOPJ = 6
 MSG_SERVOJ = 7
+MSG_WRENCH = 9
+MULT_wrench = 10000.0
 MULT_jointstate = 10000.0
 MULT_time = 1000000.0
 MULT_blend = 1000.0
@@ -52,7 +55,8 @@ Q3 = [1.5,-0.2,-1.57,0,0,0]
 connected_robot = None
 connected_robot_lock = threading.Lock()
 connected_robot_cond = threading.Condition(connected_robot_lock)
-pub_joint_states = rospy.Publisher('joint_states', JointState)
+pub_joint_states = rospy.Publisher('joint_states', JointState, queue_size=1)
+pub_wrench = rospy.Publisher('wrench', WrenchStamped, queue_size=1)
 #dump_state = open('dump_state', 'wb')
 
 class EOF(Exception): pass
@@ -78,7 +82,7 @@ end
 '''
 #RESET_PROGRAM = ''
     
-class UR5Connection(object):
+class URConnection(object):
     TIMEOUT = 1.0
     
     DISCONNECTED = 0
@@ -102,7 +106,7 @@ class UR5Connection(object):
         self.robot_state = self.CONNECTED
         self.__sock = socket.create_connection((self.hostname, self.port))
         self.__keep_running = True
-        self.__thread = threading.Thread(name="UR5Connection", target=self.__run)
+        self.__thread = threading.Thread(name="URConnection", target=self.__run)
         self.__thread.daemon = True
         self.__thread.start()
 
@@ -300,6 +304,23 @@ class CommanderTCPHandler(SocketServer.BaseRequestHandler):
                     msg.effort = state[12:18]
                     self.last_joint_states = msg
                     pub_joint_states.publish(msg)
+
+                elif mtype == MSG_WRENCH:
+                    while len(buf) < (6*4):
+                        buf = buf + self.recv_more()
+                    state_mult = struct.unpack_from("!%ii" % (6), buf, 0)
+                    buf = buf[6*4:]
+                    state = [s / MULT_wrench for s in state_mult]
+                    wrench_msg = WrenchStamped()
+                    wrench_msg.header.stamp = rospy.get_rostime()
+                    wrench_msg.wrench.force.x = state[0]
+                    wrench_msg.wrench.force.y = state[1]
+                    wrench_msg.wrench.force.z = state[2]
+                    wrench_msg.wrench.torque.x = state[3]
+                    wrench_msg.wrench.torque.y = state[4]
+                    wrench_msg.wrench.torque.z = state[5]
+                    pub_wrench.publish(wrench_msg)
+
                 elif mtype == MSG_QUIT:
                     print "Quitting"
                     raise EOF("Received quit")
@@ -442,7 +463,7 @@ def within_tolerance(a_vec, b_vec, tol_vec):
             return False
     return True
 
-class UR5TrajectoryFollower(object):
+class URTrajectoryFollower(object):
     RATE = 0.02
     def __init__(self, robot, goal_time_tolerance=None):
         self.goal_time_tolerance = goal_time_tolerance or rospy.Duration(0.0)
@@ -664,11 +685,20 @@ def main():
     joint_names = [prefix + name for name in JOINT_NAMES]
 
     # Parses command line arguments
-    parser = optparse.OptionParser(usage="usage: %prog robot_hostname")
+    parser = optparse.OptionParser(usage="usage: %prog robot_hostname [reverse_port]")
     (options, args) = parser.parse_args(rospy.myargv()[1:])
-    if len(args) != 1:
+    if len(args) < 1:
         parser.error("You must specify the robot hostname")
-    robot_hostname = args[0]
+    elif len(args) == 1:
+        robot_hostname = args[0]
+        reverse_port = DEFAULT_REVERSE_PORT
+    elif len(args) == 2:
+        robot_hostname = args[0]
+        reverse_port = int(args[1])
+        if not (0 <= reverse_port <= 65535):
+                parser.error("You entered an invalid port number")
+    else:
+        parser.error("Wrong number of parameters")
 
     # Reads the calibrated joint offsets from the URDF
     global joint_offsets
@@ -680,14 +710,14 @@ def main():
     max_velocity = rospy.get_param("~max_velocity", 2.0)
 
     # Sets up the server for the robot to connect to
-    server = TCPServer(("", 50001), CommanderTCPHandler)
+    server = TCPServer(("", reverse_port), CommanderTCPHandler)
     thread_commander = threading.Thread(name="CommanderHandler", target=server.serve_forever)
     thread_commander.daemon = True
     thread_commander.start()
 
     with open(roslib.packages.get_pkg_dir('ur_driver') + '/prog') as fin:
-        program = fin.read() % {"driver_hostname": get_my_ip(robot_hostname, PORT)}
-    connection = UR5Connection(robot_hostname, PORT, program)
+        program = fin.read() % {"driver_hostname": get_my_ip(robot_hostname, PORT), "driver_reverseport": reverse_port}
+    connection = URConnection(robot_hostname, PORT, program)
     connection.connect()
     connection.send_reset_program()
     
@@ -723,7 +753,7 @@ def main():
                 if action_server:
                     action_server.set_robot(r)
                 else:
-                    action_server = UR5TrajectoryFollower(r, rospy.Duration(1.0))
+                    action_server = URTrajectoryFollower(r, rospy.Duration(1.0))
                     action_server.start()
 
     except KeyboardInterrupt:
