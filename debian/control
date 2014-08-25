@@ -1,0 +1,12 @@
+Source: ros-indigo-ur-kinematics
+Section: misc
+Priority: extra
+Maintainer: Kelsey Hawkins <kphawkins@gatech.edu>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-catkin
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-indigo-ur-kinematics
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, 
+Description: Provides forward and inverse kinematics for Universal robot designs.
