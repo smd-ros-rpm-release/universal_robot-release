@@ -1,0 +1,12 @@
+Source: ros-hydro-ur-gazebo
+Section: misc
+Priority: extra
+Maintainer: Alexander Bubeck <aub@ipa.fhg.de>
+Build-Depends: debhelper (>= 9.0.0), ros-hydro-catkin
+Homepage: http://ros.org/wiki/ur_gazebo
+Standards-Version: 3.9.2
+
+Package: ros-hydro-ur-gazebo
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-hydro-effort-controllers, ros-hydro-gazebo-ros, ros-hydro-gazebo-ros-control, ros-hydro-gazebo-ros-pkgs, ros-hydro-joint-state-controller, ros-hydro-joint-trajectory-controller, ros-hydro-pr2-mechanism-diagnostics, ros-hydro-robot-state-publisher, ros-hydro-ros-controllers, ros-hydro-ur-description
+Description: Gazebo wrapper for the Universal UR5/10 robot arms.
