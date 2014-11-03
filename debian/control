@@ -1,0 +1,12 @@
+Source: ros-hydro-ur-kinematics
+Section: misc
+Priority: extra
+Maintainer: Alexander Bubeck <aub@ipa.fhg.de>
+Build-Depends: debhelper (>= 9.0.0), libboost-all-dev, ros-hydro-catkin, ros-hydro-geometry-msgs, ros-hydro-moveit-core, ros-hydro-moveit-ros-planning, ros-hydro-pluginlib, ros-hydro-roscpp, ros-hydro-tf-conversions
+Homepage: http://wiki.ros.org/ur_kinematics
+Standards-Version: 3.9.2
+
+Package: ros-hydro-ur-kinematics
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libboost-all-dev, ros-hydro-geometry-msgs, ros-hydro-moveit-core, ros-hydro-moveit-ros-planning, ros-hydro-pluginlib, ros-hydro-roscpp, ros-hydro-tf-conversions
+Description: Provides forward and inverse kinematics for Universal Robots designs. See http://hdl.handle.net/1853/50782 for details.
