@@ -1,0 +1,12 @@
+Source: ros-hydro-ur-bringup
+Section: misc
+Priority: extra
+Maintainer: Alexander Bubeck <aub@ipa.fhg.de>
+Build-Depends: debhelper (>= 9.0.0), ros-hydro-catkin
+Homepage: http://ros.org/wiki/ur_bringup
+Standards-Version: 3.9.2
+
+Package: ros-hydro-ur-bringup
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-hydro-tf2-ros, ros-hydro-ur-description, ros-hydro-ur-driver
+Description: The ur_bringup package
